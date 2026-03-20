@@ -56,6 +56,15 @@
 
 function processData(data, callback) {
   // Your implementation here
+  setTimeout(() => {
+    // Check if the string contains "error"
+    if (data.includes("error")){
+      callback(new Error("process data error"), undefined);
+    }
+    else {
+      callback(null, data.toUpperCase());
+    }
+  }, 120);  // delay between 100-150 ms
 }
 
 /**
@@ -115,9 +124,50 @@ const fs = require("fs");
  * @param {Object} studentInfo - An object containing the student's first name, surname, age, and hobbies.
  * @param {Function} callback - A callback function that handles the result of the file operation.
  */
-function createStudentFile(studentName, studentInfo, callback) {
+function createStudentFile(studentName, studentInfo, callback) 
+{
   // Your implementation here
+  // Step 1: Convert studentName to filename
+  const [firstName, surName] = studentName.split(" ");
+
+  const fileName = 
+    firstName.toLowerCase() + 
+    surName.charAt(0).toUpperCase() + 
+    surName.slice(1) + 
+    ".txt";
+
+  // Step 2: Check if file already exists
+  if (fs.existsSync(fileName)) 
+  {
+    return callback(new Error("File exists"));
+  }
+
+  // Step 3: Validate studentInfo matches studentName
+  if (
+    studentInfo.firstName !== firstName || 
+    studentInfo.surName !== surName
+  ) 
+  {
+    return callback(new Error("Wrong Information"));
+  }
+
+  // Step 4: Prepare file content
+  const content = 
+  `Name: ${studentInfo.firstName} ${studentInfo.surName}\n` + 
+  `Age: ${studentInfo.age}\n` + 
+  `Hobby: ${studentInfo.hobby.join(", ")}`;
+
+  // Step 5: Write file content
+  fs.writeFile(fileName, content, function(err) 
+  {
+    if (err) 
+    {
+      return callback(err);
+    }
+    callback(null);  // success
+  });
 }
+
 
 /**
  * Exercise 3: Using Promises in Asynchronous JavaScript
@@ -153,8 +203,21 @@ function createStudentFile(studentName, studentInfo, callback) {
  * Write your code below:
  */
 
-function loadUserData(userId) {
+function loadUserData(userId) 
+{
   // Your implementation here
+  return new Promise((resolve, reject) => 
+    {
+    setTimeout(() => 
+      {
+      if (typeof userId !== "number" || userId <= 0)
+      {
+        return reject(new Error("Invalid user ID"));
+      }
+
+      resolve({ id: userId, name: "John Doe" });
+    }, 100);
+  });
 }
 
 /**
@@ -197,8 +260,24 @@ function loadUserData(userId) {
  * Write your code below:
  */
 
-async function fetchUserDetails(userId) {
+async function fetchUserDetails(userId) 
+{
   // Your implementation here
+  const userPromise = new Promise((resolve, reject) => 
+  {
+    setTimeout(() => 
+    {
+      if (typeof userId !== "number" || userId <= 0)
+      {
+        return reject(new Error("Invalid user ID"));
+      }
+
+      resolve({ id: userId, name: "Jane Doe"});
+    }, 100);
+  });
+
+  // Await the Promise and return the result
+  return await userPromise;
 }
 
 /**
@@ -238,6 +317,47 @@ async function fetchUserDetails(userId) {
 
 function checkState(board) {
   // Your implementation here
+  // Step 1: Count X and O
+  const xCount = board.filter(c => c === "X").length;
+  const oCount = board.filter(c => c === "O").length;
+
+  // Step 2: Define all winning lines
+  const wins = [
+    [0,1,2], [3,4,5], [6,7,8],  // rows
+    [0,3,6], [1,4,7], [2,5,8],  // columns
+    [0,4,8], [2,4,6]           // diagonals
+  ];
+
+  // Step 3: Helper to check if someone wins
+  function checkWinner(player) 
+  {
+    return wins.some(line => line.every(index => board[index] === player));
+  }
+
+  // Step 4: Apply the rules in the correct order
+  
+  // Rule 1: All empty
+  if (xCount === 0 && oCount === 0)
+  {
+    return "X to play";
+  }
+
+  // Rule 2: Winner
+  if (checkWinner("X")) return "X wins";
+  if (checkWinner("O")) return "O wins";
+
+  // Rule 3: Tie
+  if (xCount + oCount === 9) return "It is a tie";
+
+  // Rule 4: Turn logic
+  if (xCount === oCount) return "X to play";
+  if (xCount === oCount + 1) return "O to play";
+
+  
+  // Fallback option
+  return "Invalid state";
+
+
 }
 
 module.exports = {
