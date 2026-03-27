@@ -1,6 +1,6 @@
 
 {/* Import libraries/Functions */}
-import { StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, Text, Pressable } from 'react-native';
 
 
 {/* Import components from src folder */}
@@ -8,14 +8,14 @@ import colors from '../constants/colors';
 
 
 
-export default function Cell( {value}) {
+export default function Cell( {value, onPress }) {
   return (
     // Cell View
-    <View style={styles.cell}>
+    <Pressable style={styles.cell} onPress={onPress}>
         {/* Cell Text */}
         <Text style={styles.text}>{value}</Text>
          {/* End Cell Text */}
-    </View>
+    </Pressable>
     // End Cell View
   );
 }

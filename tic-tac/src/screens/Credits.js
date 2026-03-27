@@ -1,5 +1,5 @@
 {/* Import libraries/Functions */}
-import { StyleSheet, Text, View, Button } from 'react-native';
+import { StyleSheet, Text, View, Button, ScrollView } from 'react-native';
 
 {/* Import components from src folder */}
 import Title from '../components/Title';
@@ -27,9 +27,13 @@ export default function Credits( {navigation}) {
       {/* End Top Section */}
       {/* Middle Section */}
       <View style={styles.middle_section}>
-        {/* Credits Text */}
-        <Message text={credits_text} />
-        {/* End Credits Text */}
+        {/* Add Scrollable View */}
+        <ScrollView>
+          {/* Credits Text */}
+          <Message text={credits_text} />
+          {/* End Credits Text */}
+        </ScrollView>
+        {/* End Scrollable View */}
       </View>
       {/* End Middle Section */}
       {/* Bottom Section */}
